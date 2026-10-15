@@ -1,0 +1,20 @@
+---
+- name: Prepare OpenStack nodes
+  hosts: openstack_nodes
+  become: true
+
+  tasks:
+    - name: Remove loopback hostname mappings
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: '^127\.0\.2\.1\s+'
+        state: absent
+
+    - name: Configure hostname resolution
+      ansible.builtin.blockinfile:
+        path: /etc/hosts
+        marker: "# {mark} ANSIBLE MANAGED OPENSTACK HOSTS"
+        block: |
+          10.0.1.10 controller01
+          10.0.1.11 compute01
+          10.0.1.12 storage01
